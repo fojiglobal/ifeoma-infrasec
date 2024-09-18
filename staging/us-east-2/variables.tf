@@ -17,3 +17,8 @@ variable "us_east_2c" {
   type    = string
   default = "us-east-2c"
 }
+
+variable "my_region" {
+  type = string
+  default = "us-east-2"
+}
