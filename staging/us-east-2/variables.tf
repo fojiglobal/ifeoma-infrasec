@@ -27,3 +27,23 @@ variable "env" {
   type = string
   default = "staging"
 }
+
+variable "http_port" {
+  type = number
+  default = 80
+}
+
+variable "http_protocol" {
+  type = string
+  default = "HTTP"
+}
+
+variable "https_port" {
+  type = number
+  default = 443
+}
+
+variable "https_protocol" {
+  type = string
+  default = "HTTPS"
+}
