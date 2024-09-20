@@ -13,12 +13,12 @@ resource "aws_route_table" "pub_rt" {
 }
 
 resource "aws_route_table_association" "pub_sub_1" {
-  subnet_id = aws_subnet.staging_pub_1.id
+  subnet_id      = aws_subnet.staging_pub_1.id
   route_table_id = aws_route_table.pub_rt.id
 }
 
 resource "aws_route_table_association" "pub_sub_2" {
-  subnet_id = aws_subnet.staging_pub_2.id
+  subnet_id      = aws_subnet.staging_pub_2.id
   route_table_id = aws_route_table.pub_rt.id
 }
 
@@ -37,11 +37,11 @@ resource "aws_route_table" "prv_rt" {
 }
 
 resource "aws_route_table_association" "prv_sub_1" {
-  subnet_id = aws_subnet.staging_prv_1.id
+  subnet_id      = aws_subnet.staging_prv_1.id
   route_table_id = aws_route_table.prv_rt.id
 }
 
 resource "aws_route_table_association" "prv_sub_2" {
-  subnet_id = aws_subnet.staging_prv_2.id
+  subnet_id      = aws_subnet.staging_prv_2.id
   route_table_id = aws_route_table.prv_rt.id
 }
