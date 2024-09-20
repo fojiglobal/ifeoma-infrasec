@@ -19,36 +19,36 @@ variable "us_east_2c" {
 }
 
 variable "my_region" {
-  type = string
+  type    = string
   default = "us-east-2"
 }
 
 variable "env" {
-  type = string
+  type    = string
   default = "staging"
 }
 
 variable "http_port" {
-  type = number
+  type    = number
   default = 80
 }
 
 variable "http_protocol" {
-  type = string
+  type    = string
   default = "HTTP"
 }
 
 variable "https_port" {
-  type = number
+  type    = number
   default = 443
 }
 
 variable "https_protocol" {
-  type = string
+  type    = string
   default = "HTTPS"
 }
 
 variable "alb_ssl_profile" {
-  type = string
+  type    = string
   default = "ELBSecurityPolicy-2016-08"
 }

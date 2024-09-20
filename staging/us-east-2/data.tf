@@ -19,7 +19,7 @@ data "aws_route53_zone" "route53_cloudwithify" {
 ###################### Certificate ######################
 
 data "aws_acm_certificate" "alb_cert" {
-  domain = "*.cloudwithify.online"
-  types = [ "AMAZON_ISSUED" ]
+  domain      = "*.cloudwithify.online"
+  types       = ["AMAZON_ISSUED"]
   most_recent = true
 }

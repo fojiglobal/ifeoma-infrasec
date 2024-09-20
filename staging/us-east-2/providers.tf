@@ -9,7 +9,7 @@ terraform {
   # Remote State Management
   backend "s3" {
     bucket = "ifeoma-cs2-terraform"
-    key = "staging/terraform.tfstate"
+    key    = "staging/terraform.tfstate"
     region = "us-east-2"
   }
 }
