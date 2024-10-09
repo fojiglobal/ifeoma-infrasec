@@ -9,20 +9,20 @@ variable "env" {
 variable "public_subnets" {
   type = map(object({
     cidr = string
-    azs = string
+    azs  = string
     tags = map(string)
   }))
 }
 
 variable "map_public_ip" {
-  type = bool
+  type    = bool
   default = true
 }
 
 variable "private_subnets" {
   type = map(object({
     cidr = string
-    azs = string
+    azs  = string
     tags = map(string)
   }))
 }

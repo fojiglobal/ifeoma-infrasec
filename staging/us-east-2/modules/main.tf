@@ -4,7 +4,7 @@ resource "aws_vpc" "this" {
   cidr_block = var.vpc_cidr
 
   tags = {
-    Name = "${var.env}-vpc"
+    Name        = "${var.env}-vpc"
     Environment = var.env
   }
 }
@@ -14,10 +14,10 @@ resource "aws_vpc" "this" {
 resource "aws_subnet" "public" {
   for_each = var.public_subnets
 
-  vpc_id = aws_vpc.this.id
-  cidr_block = each.value["cidr"]
-  availability_zone = each.value["azs"]
-  tags = each.value["tags"]
+  vpc_id                  = aws_vpc.this.id
+  cidr_block              = each.value["cidr"]
+  availability_zone       = each.value["azs"]
+  tags                    = each.value["tags"]
   map_public_ip_on_launch = var.map_public_ip
 }
 
@@ -26,8 +26,8 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   for_each = var.private_subnets
 
-  vpc_id = aws_vpc.this.id
-  cidr_block = each.value["cidr"]
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = each.value["cidr"]
   availability_zone = each.value["azs"]
-  tags = each.value["tags"]
+  tags              = each.value["tags"]
 }
