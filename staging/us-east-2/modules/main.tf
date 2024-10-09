@@ -59,4 +59,8 @@ resource "aws_nat_gateway" "this" {
 resource "aws_eip" "this" {
   domain     = "vpc"
   depends_on = [aws_internet_gateway.this]
+
+  tags = {
+    Name = "${var.env}-eip"
+  }
 }
