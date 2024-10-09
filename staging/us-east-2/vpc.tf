@@ -6,6 +6,7 @@ module "staging" {
   env             = local.env
   public_subnets  = local.public_subnets
   private_subnets = local.private_subnets
+  user_data       = filebase64("web.sh")
 
   # this is to create only 1 NAT gateway for our public subnet, not all 3
   pub_sub_name = "pub-sub-1"
