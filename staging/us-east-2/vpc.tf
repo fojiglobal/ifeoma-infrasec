@@ -22,3 +22,13 @@ output "pub_subnet_ids" {
 output "pub_subnet_id" {
   value = module.staging.public_subnets_ids[0]
 }
+
+# grabs all the private subnet IDs
+output "prv_subnet_ids" {
+  value = module.staging.private_subnets_ids
+}
+
+# grabs one of the private subnet ID
+output "prv_subnet_id" {
+  value = module.staging.private_subnets_ids[0]
+}
