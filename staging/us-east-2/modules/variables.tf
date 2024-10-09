@@ -32,6 +32,6 @@ variable "pub_sub_name" {
 }
 
 variable "all_ipv4_cidr" {
-  type = string
+  type    = string
   default = "0.0.0.0/0"
 }
