@@ -30,3 +30,8 @@ variable "private_subnets" {
 variable "pub_sub_name" {
   type = string
 }
+
+variable "all_ipv4_cidr" {
+  type = string
+  default = "0.0.0.0/0"
+}
