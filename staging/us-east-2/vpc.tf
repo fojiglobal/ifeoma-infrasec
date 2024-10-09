@@ -6,6 +6,9 @@ module "staging" {
   env             = local.env
   public_subnets  = local.public_subnets
   private_subnets = local.private_subnets
+
+  # this is to create only 1 NAT gateway for our public subnet, not all 3
+  pub_sub_name = "pub-sub-1"
 }
 
 # Output exported from the outputs.tf in the /modules folder
