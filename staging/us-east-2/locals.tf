@@ -67,3 +67,90 @@ locals {
     }
   }
 }
+
+################ Public SG Rules ################
+
+locals {
+  public_sg_ingress = {
+    "all-http" = {
+      src         = "0.0.0.0/0"
+      from_port   = 80
+      to_port     = 80
+      ip_protocol = "tcp"
+      description = "Allow HTTP from anywhere"
+    }
+    "all-https" = {
+      src         = "0.0.0.0/0"
+      from_port   = 443
+      to_port     = 443
+      ip_protocol = "tcp"
+      description = "Allow HTTPS from anywhere"
+    }
+  }
+
+  public_sg_egress = {
+    "all-traffic" = {
+      dest        = "0.0.0.0/0"
+      ip_protocol = "-1"
+      description = "Allow all traffic out"
+    }
+  }
+}
+
+################ Private SG Rules ################
+
+locals {
+  private_sg_egress = {
+    "all-traffic" = {
+      dest        = "0.0.0.0/0"
+      ip_protocol = "-1"
+      description = "Allow all traffic out"
+    }
+  }
+
+  private_sg_ingress = {
+    "alb-http" = {
+      src         = module.staging.public_sg_id
+      from_port   = 80
+      to_port     = 80
+      ip_protocol = "tcp"
+      description = "Allow HTTP from anywhere"
+    }
+    "alb-https" = {
+      src         = module.staging.public_sg_id
+      from_port   = 443
+      to_port     = 443
+      ip_protocol = "tcp"
+      description = "Allow HTTPS from anywhere"
+    }
+    "bastion-ssh" = {
+      src         = module.staging.bastion_sg_id
+      from_port   = 22
+      to_port     = 22
+      ip_protocol = "tcp"
+      description = "Allow only SSH from bastion"
+    }
+  }
+}
+
+################ Bastion SG Rules ################
+
+locals {
+  bastion_sg_ingress = {
+    "all-ssh" = {
+      src         = "0.0.0.0/0"
+      from_port   = 22
+      to_port     = 22
+      ip_protocol = "tcp"
+      description = "Allow SSH from anywhere"
+    }
+  }
+
+  bastion_sg_egress = {
+    "all-traffic" = {
+      dest        = "0.0.0.0/0"
+      ip_protocol = "-1"
+      description = "Allow all traffic out"
+    }
+  }
+}

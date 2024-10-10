@@ -69,3 +69,57 @@ variable "desired_capacity" {
 variable "user_data" {
   type = string
 }
+
+variable "private_sg_ingress" {
+  type = map(object({
+    src         = string
+    from_port   = number
+    to_port     = number
+    ip_protocol = string
+    description = string
+  }))
+}
+
+variable "private_sg_egress" {
+  type = map(object({
+    dest        = string
+    ip_protocol = string
+    description = string
+  }))
+}
+
+variable "public_sg_ingress" {
+  type = map(object({
+    src         = string
+    from_port   = number
+    to_port     = number
+    ip_protocol = string
+    description = string
+  }))
+}
+
+variable "public_sg_egress" {
+  type = map(object({
+    dest        = string
+    ip_protocol = string
+    description = string
+  }))
+}
+
+variable "bastion_sg_ingress" {
+  type = map(object({
+    src         = string
+    from_port   = number
+    to_port     = number
+    ip_protocol = string
+    description = string
+  }))
+}
+
+variable "bastion_sg_egress" {
+  type = map(object({
+    dest        = string
+    ip_protocol = string
+    description = string
+  }))
+}

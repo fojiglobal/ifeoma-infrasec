@@ -8,6 +8,14 @@ module "staging" {
   private_subnets = local.private_subnets
   user_data       = filebase64("web.sh")
 
+  # SG rules
+  public_sg_ingress  = local.public_sg_ingress
+  public_sg_egress   = local.public_sg_egress
+  private_sg_ingress = local.private_sg_ingress
+  private_sg_egress  = local.private_sg_egress
+  bastion_sg_ingress = local.bastion_sg_ingress
+  bastion_sg_egress  = local.bastion_sg_egress
+
   # this is to create only 1 NAT gateway for our public subnet, not all 3
   pub_sub_name = "pub-sub-1"
 }
@@ -36,3 +44,4 @@ output "prv_subnet_ids" {
 output "prv_subnet_id" {
   value = module.staging.private_subnets_ids[0]
 }
+
