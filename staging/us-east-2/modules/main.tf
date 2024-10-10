@@ -119,7 +119,7 @@ resource "aws_launch_template" "lt" {
   instance_type                        = var.instance_type
   key_name                             = var.key_pair
   instance_initiated_shutdown_behavior = "terminate"
-  #   vpc_security_group_ids = [  ]
+  vpc_security_group_ids = [ aws_security_group.private.id ]
 
   tag_specifications {
     resource_type = "instance"
