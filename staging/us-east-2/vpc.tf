@@ -21,6 +21,16 @@ module "staging" {
 
   # Route 53 
   my_domain_name = local.my_domain_name
+  my_domain_env  = local.my_domain_env
+
+  # Load balancer
+  http_port       = local.http_port
+  http_protocol   = local.http_protocol
+  https_port      = local.https_port
+  https_protocol  = local.https_protocol
+  internet_facing = local.internet_facing
+  lb_type         = local.lb_type
+  alb_ssl_profile = local.alb_ssl_profile
 }
 
 # Output exported from the outputs.tf in the /modules folder

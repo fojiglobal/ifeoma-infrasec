@@ -160,3 +160,16 @@ locals {
 locals {
   my_domain_name = "cloudwithify.online"
 }
+
+################ Load Balancer ################
+
+locals {
+  http_port       = 80
+  http_protocol   = "HTTP"
+  https_port      = 443
+  https_protocol  = "HTTPS"
+  internet_facing = false
+  lb_type         = "application"
+  alb_ssl_profile = "ELBSecurityPolicy-2016-08"
+  my_domain_env   = "stg"
+}
