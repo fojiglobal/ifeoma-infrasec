@@ -123,3 +123,7 @@ variable "bastion_sg_egress" {
     description = string
   }))
 }
+
+variable "my_domain_name" {
+  type = string
+}

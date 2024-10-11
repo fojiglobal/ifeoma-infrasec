@@ -1,3 +1,14 @@
+###################### Data Sources ######################
+data "aws_route53_zone" "my_domain" {
+  name = "${var.my_domain_name}."
+}
+
+data "aws_acm_certificate" "alb_cert" {
+  domain      = "*.${var.my_domain_name}"
+  types       = ["AMAZON_ISSUED"]
+  most_recent = true
+}
+
 ###################### VPC ######################
 
 resource "aws_vpc" "this" {
@@ -119,7 +130,7 @@ resource "aws_launch_template" "lt" {
   instance_type                        = var.instance_type
   key_name                             = var.key_pair
   instance_initiated_shutdown_behavior = "terminate"
-  vpc_security_group_ids = [ aws_security_group.private.id ]
+  vpc_security_group_ids               = [aws_security_group.private.id]
 
   tag_specifications {
     resource_type = "instance"

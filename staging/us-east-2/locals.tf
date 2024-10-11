@@ -154,3 +154,9 @@ locals {
     }
   }
 }
+
+################ Route 53 ################
+
+locals {
+  my_domain_name = "cloudwithify.online"
+}

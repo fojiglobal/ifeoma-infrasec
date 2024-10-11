@@ -18,6 +18,9 @@ module "staging" {
 
   # this is to create only 1 NAT gateway for our public subnet, not all 3
   pub_sub_name = "pub-sub-1"
+
+  # Route 53 
+  my_domain_name = local.my_domain_name
 }
 
 # Output exported from the outputs.tf in the /modules folder
