@@ -159,3 +159,11 @@ variable "alb_ssl_profile" {
 variable "my_domain_env" {
   type = string
 }
+
+variable "route53_target_health" {
+  type = bool
+}
+
+variable "record_type_A" {
+  type = string
+}

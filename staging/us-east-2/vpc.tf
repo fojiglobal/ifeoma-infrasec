@@ -31,6 +31,10 @@ module "staging" {
   internet_facing = local.internet_facing
   lb_type         = local.lb_type
   alb_ssl_profile = local.alb_ssl_profile
+
+  # DNS
+  route53_target_health = local.route53_target_health
+  record_type_A         = local.record_type_A
 }
 
 # Output exported from the outputs.tf in the /modules folder
