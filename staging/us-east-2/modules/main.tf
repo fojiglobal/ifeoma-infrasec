@@ -150,7 +150,7 @@ resource "aws_autoscaling_group" "asg" {
   min_size            = var.min_size
   max_size            = var.max_size
   desired_capacity    = var.desired_capacity
-  #   target_group_arns = []
+  target_group_arns   = [aws_lb_target_group.tg.arn]
 
   launch_template {
     id      = aws_launch_template.lt.id
