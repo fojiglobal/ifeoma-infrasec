@@ -1,3 +1,14 @@
+###################### Data Sources ######################
+data "aws_route53_zone" "my_domain" {
+  name = "${var.my_domain_name}."
+}
+
+data "aws_acm_certificate" "alb_cert" {
+  domain      = "*.${var.my_domain_name}"
+  types       = ["AMAZON_ISSUED"]
+  most_recent = true
+}
+
 ###################### VPC ######################
 
 resource "aws_vpc" "this" {
@@ -119,7 +130,7 @@ resource "aws_launch_template" "lt" {
   instance_type                        = var.instance_type
   key_name                             = var.key_pair
   instance_initiated_shutdown_behavior = "terminate"
-  vpc_security_group_ids = [ aws_security_group.private.id ]
+  vpc_security_group_ids               = [aws_security_group.private.id]
 
   tag_specifications {
     resource_type = "instance"
@@ -139,7 +150,7 @@ resource "aws_autoscaling_group" "asg" {
   min_size            = var.min_size
   max_size            = var.max_size
   desired_capacity    = var.desired_capacity
-  #   target_group_arns = []
+  target_group_arns   = [aws_lb_target_group.tg.arn]
 
   launch_template {
     id      = aws_launch_template.lt.id
@@ -150,5 +161,109 @@ resource "aws_autoscaling_group" "asg" {
     key                 = "name"
     value               = "${var.env}-asg-web-server"
     propagate_at_launch = true
+  }
+}
+
+###################### Target Group ######################
+
+resource "aws_lb_target_group" "tg" {
+  name     = "${var.env}-tg-80"
+  port     = var.http_port
+  protocol = var.http_protocol
+  vpc_id   = aws_vpc.this.id
+
+  health_check {
+    healthy_threshold = 2
+    interval          = 10
+  }
+}
+
+###################### Load Balancer ######################
+
+resource "aws_lb" "alb" {
+  name               = "${var.env}-alb"
+  internal           = var.internet_facing
+  load_balancer_type = var.lb_type
+  security_groups    = [aws_security_group.public.id]
+  subnets            = [for subnet in aws_subnet.public : subnet.id]
+
+  tags = {
+    Name        = "${var.env}-alb"
+    Environment = var.env
+  }
+}
+
+###################### Listeners ######################
+
+resource "aws_lb_listener" "https_listener" {
+  load_balancer_arn = aws_lb.alb.arn
+  port              = var.https_port
+  protocol          = var.https_protocol
+  ssl_policy        = var.alb_ssl_profile
+  certificate_arn   = data.aws_acm_certificate.alb_cert.arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.tg.arn
+  }
+}
+
+resource "aws_lb_listener" "http_to_https_listener" {
+  load_balancer_arn = aws_lb.alb.arn
+  port              = var.http_port
+  protocol          = var.http_protocol
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = var.https_port
+      protocol    = var.https_protocol
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+###################### Listener Rules ######################
+
+resource "aws_lb_listener_rule" "web_rule" {
+  listener_arn = aws_lb_listener.https_listener.arn
+  priority     = 100
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.tg.arn
+  }
+
+  condition {
+    host_header {
+      values = ["www.${var.my_domain_env}.${var.my_domain_name}", "${var.my_domain_env}.${var.my_domain_name}"]
+    }
+  }
+}
+
+###################### DNS ######################
+
+resource "aws_route53_record" "stg_record" {
+  zone_id = data.aws_route53_zone.my_domain.zone_id
+  name    = "${var.my_domain_env}.${var.my_domain_name}"
+  type    = var.record_type_A
+
+  alias {
+    name                   = aws_lb.alb.dns_name
+    zone_id                = aws_lb.alb.zone_id
+    evaluate_target_health = var.route53_target_health
+  }
+}
+
+resource "aws_route53_record" "www_stg_record" {
+  zone_id = data.aws_route53_zone.my_domain.zone_id
+  name    = "www.${var.my_domain_env}.${var.my_domain_name}"
+  type    = var.record_type_A
+
+  alias {
+    name                   = aws_lb.alb.dns_name
+    zone_id                = aws_lb.alb.zone_id
+    evaluate_target_health = var.route53_target_health
   }
 }

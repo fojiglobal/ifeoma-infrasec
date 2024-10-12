@@ -18,6 +18,23 @@ module "staging" {
 
   # this is to create only 1 NAT gateway for our public subnet, not all 3
   pub_sub_name = "pub-sub-1"
+
+  # Route 53 
+  my_domain_name = local.my_domain_name
+  my_domain_env  = local.my_domain_env
+
+  # Load balancer
+  http_port       = local.http_port
+  http_protocol   = local.http_protocol
+  https_port      = local.https_port
+  https_protocol  = local.https_protocol
+  internet_facing = local.internet_facing
+  lb_type         = local.lb_type
+  alb_ssl_profile = local.alb_ssl_profile
+
+  # DNS
+  route53_target_health = local.route53_target_health
+  record_type_A         = local.record_type_A
 }
 
 # Output exported from the outputs.tf in the /modules folder
