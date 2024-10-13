@@ -46,7 +46,7 @@ resource "aws_security_group" "bastion_sg" {
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
-    cidr_blocks      = ["192.16.10.22/32"]  # Added a more restrictive IP - dummy IP
+    cidr_blocks      = ["192.16.10.22/32"] # Added a more restrictive IP - dummy IP
     ipv6_cidr_blocks = ["::/0"]
   }
 
