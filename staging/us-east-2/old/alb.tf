@@ -15,11 +15,12 @@ resource "aws_lb_target_group" "staging_tg" {
 ###################### Application Load Balancer ######################
 
 resource "aws_lb" "staging_alb" {
-  name               = "${var.env}-alb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.pub_sg.id]
-  subnets            = [aws_subnet.staging_pub_1.id, aws_subnet.staging_pub_2.id]
+  name                       = "${var.env}-alb"
+  subnets                    = [aws_subnet.staging_pub_1.id, aws_subnet.staging_pub_2.id]
+  internal                   = false
+  security_groups            = [aws_security_group.pub_sg.id]
+  load_balancer_type         = "application"
+  drop_invalid_header_fields = true
 
   tags = {
     Name        = "${var.env}-alb"

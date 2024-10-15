@@ -181,11 +181,12 @@ resource "aws_lb_target_group" "tg" {
 ###################### Load Balancer ######################
 
 resource "aws_lb" "alb" {
-  name               = "${var.env}-alb"
-  internal           = var.internet_facing
-  load_balancer_type = var.lb_type
-  security_groups    = [aws_security_group.public.id]
-  subnets            = [for subnet in aws_subnet.public : subnet.id]
+  name                       = "${var.env}-alb"
+  subnets                    = [for subnet in aws_subnet.public : subnet.id]
+  internal                   = var.internet_facing
+  security_groups            = [aws_security_group.public.id]
+  load_balancer_type         = var.lb_type
+  drop_invalid_header_fields = true
 
   tags = {
     Name        = "${var.env}-alb"
