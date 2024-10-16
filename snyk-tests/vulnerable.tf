@@ -37,8 +37,9 @@ resource "aws_lb" "test" {
 
 resource "aws_lb_listener" "front_end" {
   load_balancer_arn = aws_lb.front_end.arn
-  port              = "80"
-  protocol          = "HTTP"
+  # port              = "80"
+  port              = "443"   
+  protocol          = "HTTPS"         # this is to resolve the snyk critical severity vulnerability
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.front_end.arn
