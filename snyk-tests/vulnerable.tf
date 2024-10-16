@@ -22,11 +22,12 @@ resource "aws_ebs_volume" "example" {
 
 
 resource "aws_lb" "test" {
-  name               = "test-lb-tf"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.lb_sg.id]
-  subnets            = [for subnet in aws_subnet.public : subnet.id]
+  name                       = "test-lb-tf"
+  internal                   = false
+  load_balancer_type         = "application"
+  security_groups            = [aws_security_group.lb_sg.id]
+  subnets                    = [for subnet in aws_subnet.public : subnet.id]
+  drop_invalid_header_fields = true
 
   enable_deletion_protection = false
 
@@ -38,8 +39,8 @@ resource "aws_lb" "test" {
 resource "aws_lb_listener" "front_end" {
   load_balancer_arn = aws_lb.front_end.arn
   # port              = "80"
-  port              = "443"   
-  protocol          = "HTTPS"         # this is to resolve the snyk critical severity vulnerability
+  port     = "443"
+  protocol = "HTTPS" # this is to resolve the snyk critical severity vulnerability
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.front_end.arn
