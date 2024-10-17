@@ -1,5 +1,6 @@
 module "staging" {
-  source = "./modules"
+  # this module now uses the published module in "ifeoma-tf-modules" repo
+  source = "github.com/fojiglobal/ifeoma-tf-modules//staging?ref=v1.0.0" 
 
   # these are the variable names in variables.tf "/modules" folder
   vpc_cidr        = local.vpc_cidr_block
@@ -44,21 +45,25 @@ output "vpc_id" {
 
 # grabs all the public subnet IDs
 output "pub_subnet_ids" {
-  value = module.staging.public_subnets_ids
+  # value = module.staging.public_subnet_ids --> for the local module, just the a little difference in the name "public_subnets_ids"
+  value = module.staging.public_subnet_ids
 }
 
 # grabs one of the public subnet ID
 output "pub_subnet_id" {
-  value = module.staging.public_subnets_ids[0]
+  # value = module.staging.public_subnet_ids[0] --> for the local module, just the a little difference in the name "public_subnets_ids"
+  value = module.staging.public_subnet_ids[0]
 }
 
 # grabs all the private subnet IDs
 output "prv_subnet_ids" {
-  value = module.staging.private_subnets_ids
+  # value = module.staging.private_subnet_ids --> for the local module, just the a little difference in the name "private_subnets_ids"
+  value = module.staging.private_subnet_ids
 }
 
 # grabs one of the private subnet ID
 output "prv_subnet_id" {
-  value = module.staging.private_subnets_ids[0]
+  # value = module.staging.private_subnet_ids[0] --> for the local module, just the a little difference in the name "private_subnets_ids"
+  value = module.staging.private_subnet_ids[0]
 }
 
