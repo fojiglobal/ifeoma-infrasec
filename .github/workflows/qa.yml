@@ -1,0 +1,75 @@
+# This is a basic workflow to provision our QA environment using Terraform in CI/CD
+
+name: QA Infra Provisioning with Terraform
+
+# Controls when the workflow will run
+on:
+    # Triggers the workflow on push or pull request events but only for the "main" branch 
+    push: 
+        branches: [ "main" ]
+    pull_request:
+        branches: [ "main" ]
+    
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
+# AWS Credentials for our build & deployment (Service Account User Credential)
+env: 
+    AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+    AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+    AWS_DEFAULT_REGION: ${{secrets.AWS_DEFAULT_REGION}}
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs: 
+    # This workflow contains a single job called "build"
+    tfplan: # this is our own "build" step
+        defaults: 
+            run:
+                shell: bash
+                working-directory: "./qa/us-east-2"
+        
+        # The type of runner that the job will run on
+        runs-on: ubuntu-latest
+
+        # Steps represent a sequence of tasks that will be executed as part of the job
+        steps:
+
+            # Checkout our respository under the $GITHUB_WORKSPACE for access 
+            - name: Checkout Branch
+              uses: actions/checkout@v4
+
+            # Set up Terraform to run our terraform commands
+            - name: Set Up Terraform
+              uses: hashicorp/setup-terraform@v3
+
+            - name: Terraform Format
+              id: fmt
+              run: terraform fmt -check
+              continue-on-error: true
+
+            - name: Terraform Init
+              id: init
+              run: terraform init
+
+            - name: Terraform Validate
+              id: validate
+              run: terraform validate -no-color
+            
+            - name: Terraform Plan
+              id: plan
+              run: terraform plan -no-color
+              continue-on-error: true
+
+    tfapply:
+        needs: tfplan
+        runs-on: ubuntu-latest
+
+        # Steps representing the sequence of tasks that will be executed as part of the "tfapply" job
+        steps: 
+            # Checkout our respository under the $GITHUB_WORKSPACE for access 
+            - name: Checkout Branch
+              uses: actions/checkout@v4
+
+            # Deploy our infrastructure
+            - name: Deploy Terraform
+              run: echo "Terraform Apply"
