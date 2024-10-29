@@ -144,7 +144,7 @@ jobs:
       ## Only Run TF Apply when a PR is merged
       if: github.event_name == 'push'
 
-      needs: tfplan
+      needs: terraform-snyk-scan
       runs-on: ubuntu-latest
 
       # Steps representing the sequence of tasks that will be executed as part of the "tfapply" job
