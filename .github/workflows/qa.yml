@@ -122,6 +122,7 @@ jobs:
                   })
                 }
 
+    # Snyk Code Scanning
     terraform-snyk-scan:
       needs: tfplan
       runs-on: ubuntu-latest
@@ -131,7 +132,10 @@ jobs:
           uses: snyk/actions/iac@master
           env:
             SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          with:
+            file: "./qa/us-east-2"
 
+    # Deploy Step
     tfapply:
       ## Only Run TF Apply when a PR is merged
       if: github.event_name == 'push'
