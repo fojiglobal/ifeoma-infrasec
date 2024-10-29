@@ -122,6 +122,16 @@ jobs:
                   })
                 }
 
+    terraform-snyk-scan:
+      needs: tfplan
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - name: Scan Terraform Code for security misconfigurations - resolve all 'critical' and 'high' vulnerabilities before merging to 'main'
+          uses: snyk/actions/iac@master
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
     tfapply:
       ## Only Run TF Apply when a PR is merged
       if: github.event_name == 'push'
