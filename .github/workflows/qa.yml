@@ -137,7 +137,7 @@ jobs:
             SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           with:
             file: "./qa/us-east-2"
-            args: --severity-threshold=critical    # only break pipeline for any 'critical' vulnerabilities detected
+            args: --severity-threshold=high    # only break pipeline for any 'high' vulnerabilities detected
 
     # Deploy Step
     tfapply:
