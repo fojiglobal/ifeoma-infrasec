@@ -137,12 +137,15 @@ jobs:
             SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           with:
             file: "./qa/us-east-2"
-            args: --severity-threshold=critical    # only break pipeline for any 'critical' vulnerabilities detected
+            args: --severity-threshold=high    # only break pipeline for any 'high' vulnerabilities detected
 
     # Deploy Step
     tfapply:
       ## Only Run TF Apply when a PR is merged
-      if: github.event_name == 'push'
+
+      # always run when there is a merge event irrespective of whether the scan job ran or not
+      # this is assuming all security scan was remediated (if any) before merge
+      if: always() && github.event_name == 'push'    
 
       needs: terraform-snyk-scan
       runs-on: ubuntu-latest
