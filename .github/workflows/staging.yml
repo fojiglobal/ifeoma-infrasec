@@ -167,3 +167,29 @@ jobs:
           # Deploy our infrastructure
           - name: Deploy Terraform
             run: terraform apply -auto-approve
+
+    # Destroy the infrastructure
+    tfdestroy:
+      ## Only Run TF Destroy when the pipeline is triggered manually 
+      if: always() && github.event_name == 'workflow_dispatch'    
+
+      needs: tfapply
+      runs-on: ubuntu-latest
+
+      # Steps representing the sequence of tasks that will be executed as part of the "tfapply" job
+      steps: 
+          # Checkout our respository under the $GITHUB_WORKSPACE for access 
+          - name: Checkout Branch
+            uses: actions/checkout@v4
+
+          # Set up Terraform to run our terraform commands
+          - name: Set Up Terraform
+            uses: hashicorp/setup-terraform@v3
+
+          - name: Terraform Init
+            id: init
+            run: terraform init
+
+          # Deploy our infrastructure
+          - name: Deploy Terraform
+            run: terraform destroy -auto-approve
