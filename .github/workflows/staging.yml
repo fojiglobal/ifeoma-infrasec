@@ -1,6 +1,6 @@
 # This is a basic workflow to provision our QA environment using Terraform in CI/CD
 
-name: QA Infra Provisioning with Terraform
+name: Staging Infra Provisioning with Terraform
 
 # Controls when the workflow will run
 on:
@@ -156,6 +156,14 @@ jobs:
           - name: Checkout Branch
             uses: actions/checkout@v4
 
+          # Set up Terraform to run our terraform commands
+          - name: Set Up Terraform
+            uses: hashicorp/setup-terraform@v3
+
+          - name: Terraform Init
+            id: init
+            run: terraform init
+
           # Deploy our infrastructure
           - name: Deploy Terraform
-            run: echo "Terraform Apply"
+            run: terraform apply -auto-approve
