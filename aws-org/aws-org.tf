@@ -13,3 +13,9 @@ resource "aws_organizations_account" "cs2-sandbox" {
   name  = "cs2-sandbox"
   email = "alearning58+cs2sandbox@gmail.com"
 }
+
+# AWS Organization Account - 'CS2-Secops' 
+resource "aws_organizations_account" "cs2-secops" {
+  name  = "cs2-secops"
+  email = "alearning58+cs2secops@gmail.com"
+}
