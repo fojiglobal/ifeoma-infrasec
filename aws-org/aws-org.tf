@@ -21,3 +21,14 @@ resource "aws_organizations_account" "cs2-secops" {
   email = "alearning58+cs2secops@gmail.com"
   parent_id = aws_organizations_organizational_unit.cs2-secops.id
 }
+
+# Import AWS SSO Permission set 
+resource "aws_ssoadmin_permission_set" "admin-permission" {
+  name             = "AdministratorAccess"
+  instance_arn     = tolist(data.aws_ssoadmin_instances.fojiglobal.arns)[0]
+}
+
+resource "aws_ssoadmin_permission_set" "billing-permission" {
+  name             = "Billing"
+  instance_arn     = tolist(data.aws_ssoadmin_instances.fojiglobal.arns)[0]
+}
