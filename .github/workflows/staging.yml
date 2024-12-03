@@ -5,10 +5,10 @@ name: Staging Infra Provisioning with Terraform
 # Controls when the workflow will run
 on:
     # Triggers the workflow on push or pull request events but only for the "main" branch 
-    push: 
-        branches: [ "main" ]
-    pull_request:
-        branches: [ "main" ]
+    # push: 
+    #     branches: [ "main" ]
+    # pull_request:
+    #     branches: [ "main" ]
     
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:
@@ -29,9 +29,7 @@ defaults:
 jobs: 
     # This workflow contains a single job called "build"
     tfplan: # this is our own "build" step
-
-      ## Only Run TF Plan when a PR is opened
-      if: github.event_name == 'pull_request'
+      name: Terraform plan
       
       # The type of runner that the job will run on
       runs-on: ubuntu-latest
@@ -63,69 +61,70 @@ jobs:
           - name: Terraform Plan
             id: plan
             run: terraform plan -no-color
-            continue-on-error: true
+            # continue-on-error: true
 
           # Add TF Plan Output to PR Comment
-          - uses: actions/github-script@v7
-            if: github.event_name == 'pull_request'
-            env:
-              PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-            with:
-              github-token: ${{ secrets.GITHUB_TOKEN }}
-              script: |
-                // 1. Retrieve existing bot comments for the PR
-                const { data: comments } = await github.rest.issues.listComments({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: context.issue.number,
-                })
-                const botComment = comments.find(comment => {
-                  return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style')
-                })
+          # - uses: actions/github-script@v7
+          #   if: github.event_name == 'pull_request'
+          #   env:
+          #     PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+          #   with:
+          #     github-token: ${{ secrets.GITHUB_TOKEN }}
+          #     script: |
+          #       // 1. Retrieve existing bot comments for the PR
+          #       const { data: comments } = await github.rest.issues.listComments({
+          #         owner: context.repo.owner,
+          #         repo: context.repo.repo,
+          #         issue_number: context.issue.number,
+          #       })
+          #       const botComment = comments.find(comment => {
+          #         return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style')
+          #       })
           
-                // 2. Prepare format of the comment
-                const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-                #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-                #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-                <details><summary>Validation Output</summary>
+          #       // 2. Prepare format of the comment
+          #       const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+          #       #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+          #       #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+          #       <details><summary>Validation Output</summary>
           
-                \`\`\`\n
-                ${{ steps.validate.outputs.stdout }}
-                \`\`\`
+          #       \`\`\`\n
+          #       ${{ steps.validate.outputs.stdout }}
+          #       \`\`\`
           
-                </details>
+          #       </details>
           
-                #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+          #       #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
           
-                <details><summary>Show Plan</summary>
+          #       <details><summary>Show Plan</summary>
           
-                \`\`\`\n
-                ${process.env.PLAN}
-                \`\`\`
+          #       \`\`\`\n
+          #       ${process.env.PLAN}
+          #       \`\`\`
           
-                </details>
+          #       </details>
           
-                *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+          #       *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
           
-                // 3. If we have a comment, update it, otherwise create a new one
-                if (botComment) {
-                  github.rest.issues.updateComment({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    comment_id: botComment.id,
-                    body: output
-                  })
-                } else {
-                  github.rest.issues.createComment({
-                    issue_number: context.issue.number,
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    body: output
-                  })
-                }
+          #       // 3. If we have a comment, update it, otherwise create a new one
+          #       if (botComment) {
+          #         github.rest.issues.updateComment({
+          #           owner: context.repo.owner,
+          #           repo: context.repo.repo,
+          #           comment_id: botComment.id,
+          #           body: output
+          #         })
+          #       } else {
+          #         github.rest.issues.createComment({
+          #           issue_number: context.issue.number,
+          #           owner: context.repo.owner,
+          #           repo: context.repo.repo,
+          #           body: output
+          #         })
+          #       }
 
     # Snyk Code Scanning
     terraform-snyk-scan:
+      name: Snyk Scan
       needs: tfplan
       runs-on: ubuntu-latest
 
@@ -142,14 +141,11 @@ jobs:
 
     # Deploy Step
     tfapply:
-      ## Only Run TF Apply when a PR is merged
-
-      # always run when there is a merge event irrespective of whether the scan job ran or not
-      # this is assuming all security scan was remediated (if any) before merge
-      if: always() && github.event_name == 'push'    
-
+      name: Deploy Infrastructure
       needs: terraform-snyk-scan
       runs-on: ubuntu-latest
+      environment: 
+        name: aws-mgmt
 
       # Steps representing the sequence of tasks that will be executed as part of the "tfapply" job
       steps: 
@@ -168,29 +164,3 @@ jobs:
           # Deploy our infrastructure
           - name: Deploy Terraform
             run: terraform apply -auto-approve
-
-    # Destroy the infrastructure
-    tfdestroy:
-      ## Only Run TF Destroy when the pipeline is triggered manually 
-      if: always() && github.event_name == 'workflow_dispatch'    
-
-      needs: tfapply
-      runs-on: ubuntu-latest
-
-      # Steps representing the sequence of tasks that will be executed as part of the "tfapply" job
-      steps: 
-          # Checkout our respository under the $GITHUB_WORKSPACE for access 
-          - name: Checkout Branch
-            uses: actions/checkout@v4
-
-          # Set up Terraform to run our terraform commands
-          - name: Set Up Terraform
-            uses: hashicorp/setup-terraform@v3
-
-          - name: Terraform Init
-            id: init
-            run: terraform init
-
-          # Deploy our infrastructure
-          - name: Deploy Terraform
-            run: terraform destroy -auto-approve
