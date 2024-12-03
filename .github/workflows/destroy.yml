@@ -28,7 +28,7 @@ defaults:
 jobs: 
     # Destroy the infrastructure
     tfdestroy:
-      name: Destroy Infrastructure
+      name: Destroy Infrastructuree
       runs-on: ubuntu-latest
 
       steps: 
