@@ -29,9 +29,7 @@ defaults:
 jobs: 
     # This workflow contains a single job called "build"
     tfplan: # this is our own "build" step
-
-      ## Only Run TF Plan when a PR is opened
-      # if: github.event_name == 'pull_request'
+      name: Terraform plan
       
       # The type of runner that the job will run on
       runs-on: ubuntu-latest
@@ -126,6 +124,7 @@ jobs:
 
     # Snyk Code Scanning
     terraform-snyk-scan:
+      name: Snyk Scan
       needs: tfplan
       runs-on: ubuntu-latest
 
@@ -142,12 +141,7 @@ jobs:
 
     # Deploy Step
     tfapply:
-      ## Only Run TF Apply when a PR is merged
-
-      # always run when there is a merge event irrespective of whether the scan job ran or not
-      # this is assuming all security scan was remediated (if any) before merge
-      # if: always() && github.event_name == 'push'    
-
+      name: Deploy Infrastructure
       needs: terraform-snyk-scan
       runs-on: ubuntu-latest
       environment: 
@@ -170,29 +164,3 @@ jobs:
           # Deploy our infrastructure
           - name: Deploy Terraform
             run: terraform apply -auto-approve
-
-    # # Destroy the infrastructure
-    # tfdestroy:
-    #   ## Only Run TF Destroy when the pipeline is triggered manually 
-    #   if: always() && github.event_name == 'workflow_dispatch'    
-
-    #   needs: tfapply
-    #   runs-on: ubuntu-latest
-
-    #   # Steps representing the sequence of tasks that will be executed as part of the "tfapply" job
-    #   steps: 
-    #       # Checkout our respository under the $GITHUB_WORKSPACE for access 
-    #       - name: Checkout Branch
-    #         uses: actions/checkout@v4
-
-    #       # Set up Terraform to run our terraform commands
-    #       - name: Set Up Terraform
-    #         uses: hashicorp/setup-terraform@v3
-
-    #       - name: Terraform Init
-    #         id: init
-    #         run: terraform init
-
-    #       # Deploy our infrastructure
-    #       - name: Deploy Terraform
-    #         run: terraform destroy -auto-approve
