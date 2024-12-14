@@ -8,6 +8,7 @@ module "staging" {
   public_subnets  = local.public_subnets
   private_subnets = local.private_subnets
   user_data       = filebase64("web.sh")
+  ami_id          = "ami-036841078a4b68e14"
 
   # SG rules
   public_sg_ingress  = local.public_sg_ingress
