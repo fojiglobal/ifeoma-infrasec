@@ -32,7 +32,7 @@ jobs:
       runs-on: ubuntu-latest
 
       steps: 
-          # Checkout our respository under the $GITHUB_WORKSPACE for access 
+          # Checkout our branch under the $GITHUB_WORKSPACE for access 
           - name: Checkout Branch
             uses: actions/checkout@v4
 
@@ -53,7 +53,7 @@ jobs:
             id: init
             run: terraform init
 
-          # Deploy our infrastructure
+          # Destroy our infrastructure
           - name: Destroy Infrastructure
             run: terraform destroy -auto-approve
             # Best practice: Omit -auto-approve for sensitive environments, requiring manual confirmation
