@@ -54,7 +54,7 @@ jobs:
             run: terraform init
 
           # Deploy our infrastructure
-          - name: Deploy Terraform
+          - name: Destroy Infrastructure
             run: terraform destroy -auto-approve
             # Best practice: Omit -auto-approve for sensitive environments, requiring manual confirmation
 
