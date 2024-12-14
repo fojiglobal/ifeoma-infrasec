@@ -1,0 +1,60 @@
+name: Docker Build and Publish to ECR
+
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+    working-directory: "./../docker/web-app/"
+env:
+    AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+    AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+    AWS_DEFAULT_REGION: ${{secrets.AWS_DEFAULT_REGION}}
+    ECR_REPOSITORY: ${{secrets.ECR_REPOSITORY_NAME}}
+    IMAGE_TAG: v1.0
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up AWS CLI
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{env.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{env.AWS_SECRET_ACCESS_KEY}}
+          aws-region: ${{env.AWS_DEFAULT_REGION}}
+
+      # Step 3: Log in to Amazon ECR
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Step 4: Build Docker image
+      - name: Build Docker image
+        env:
+            ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -t $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:${{env.IMAGE_TAG}} .
+        id: docker-build
+         
+      # Step 5: Scan Docker image with Snyk
+      - name: Snyk Security Scan
+        uses: snyk/actions/docker@master
+        with:
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{env.IMAGE_TAG}}
+          args: --severity-threshold=high --report
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: false
+
+      #Step 7: Push Docker image to ECR  # docker push ${{ steps.login-ecr.outputs.registry }}/${{secrets.ECR_REPOSITORY_NAME}}:december
+      - name: Push Docker image to ECR
+        run: |
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{env.IMAGE_TAG}}
+         

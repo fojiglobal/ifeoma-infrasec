@@ -1,0 +1,53 @@
+name: Destroy AWS Organization
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: "Type 'DESTROY' to confirm this action"
+        required: true
+        default: ""
+
+env: 
+    AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+    AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+    AWS_DEFAULT_REGION: ${{secrets.AWS_DEFAULT_REGION}}
+
+defaults: 
+    run:
+        shell: bash
+        working-directory: "./../aws-org"
+
+jobs:
+  destroy-aws-org:
+    name: Destroy AWS Organization
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Branch
+        uses: actions/checkout@v4
+
+      - name: Validate Confirmation
+        id: validate_confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirmation }}" != "DESTROY" ]; then
+            echo "Error: You must type 'DESTROY' to confirm this action."
+            exit 1
+          fi
+
+      - name: Set Up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Destroy Infrastructure
+        run: terraform destroy -auto-approve
+        # Best practice: Omit -auto-approve for sensitive environments, requiring manual confirmation
+
+      - name: Cleanup Local State (Optional)
+        run: |
+            echo "Cleaning up local state files..."
+            rm -rf .terraform .terraform.lock.hcl terraform.tfstate terraform.tfstate.backup
+    
