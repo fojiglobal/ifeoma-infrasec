@@ -16,12 +16,14 @@ env:
 defaults: 
     run:
         shell: bash
-        working-directory: "./../aws-org"
+        working-directory: "./aws-org"
 
 jobs:
   destroy-aws-org:
     name: Destroy AWS Organization
     runs-on: ubuntu-latest
+    environment: 
+        name: aws-mgmt
 
     steps:
       - name: Checkout Branch

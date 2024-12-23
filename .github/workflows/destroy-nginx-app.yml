@@ -30,6 +30,8 @@ jobs:
     tfdestroy:
       name: Destroy Infrastructuree
       runs-on: ubuntu-latest
+      environment: 
+        name: aws-mgmt
 
       steps: 
           # Checkout our branch under the $GITHUB_WORKSPACE for access 

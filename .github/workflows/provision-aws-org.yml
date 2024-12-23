@@ -16,7 +16,7 @@ env:
 defaults: 
     run:
         shell: bash
-        working-directory: "./../aws-org"
+        working-directory: "./aws-org"
 
 jobs:
   provision-aws-org:
