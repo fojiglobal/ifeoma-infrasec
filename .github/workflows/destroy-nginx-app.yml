@@ -1,6 +1,6 @@
 # This is a basic workflow to provision our QA environment using Terraform in CI/CD
 
-name: Destroy All Deployed Infra with Terraform
+name: Destroy Staging Infra with Terraform
 
 # Controls when the workflow will run
 on: 
@@ -28,7 +28,7 @@ defaults:
 jobs: 
     # Destroy the infrastructure
     tfdestroy:
-      name: Destroy Infrastructuree
+      name: Destroy Infrastructure
       runs-on: ubuntu-latest
       environment: 
         name: aws-mgmt
