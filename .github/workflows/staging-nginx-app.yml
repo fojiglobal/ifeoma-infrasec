@@ -1,6 +1,6 @@
 # This is a basic workflow to provision our QA environment using Terraform in CI/CD
 
-name: Staging Infra Provisioning with Terraform
+name: Provision Staging Infra with Terraform
 
 # Controls when the workflow will run
 on:
