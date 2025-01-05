@@ -112,7 +112,7 @@ resource "aws_wafv2_web_acl" "staging_waf" {
 
   # POSIX operating system AWS Managed rule group
   rule {
-    name     = "AWSManagedRulesPOSIXRuleSet"
+    name     = "AWSManagedRulesUnixRuleSet"
     priority = 60
     override_action {
       count {}
