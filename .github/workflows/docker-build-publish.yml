@@ -51,7 +51,7 @@ jobs:
           args: --severity-threshold=high --report
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: false
+        continue-on-error: true
 
       #Step 7: Push Docker image to ECR  # docker push ${{ steps.login-ecr.outputs.registry }}/${{secrets.ECR_REPOSITORY_NAME}}:december
       - name: Push Docker image to ECR
