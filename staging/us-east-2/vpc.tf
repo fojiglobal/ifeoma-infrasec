@@ -1,6 +1,6 @@
 module "staging" {
   # this module now uses the published module in "ifeoma-tf-modules" repo
-  source = "github.com/fojiglobal/ifeoma-tf-modules//staging?ref=v1.0.0"
+  source = "github.com/fojiglobal/ifeoma-tf-modules//staging?ref=v1.1.0"
 
   # these are the variable names in variables.tf "/modules" folder
   vpc_cidr        = local.vpc_cidr_block
