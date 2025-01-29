@@ -24,7 +24,7 @@
 # age = current_year - birth_year
 # print("I am" , age , "years old.")
 
-#################################### Input from User ####################################
+# ----------------------------------------------------------------------------------
 
 # birth_year = int(input("Enter your birth year: "))
 # current_year = int(input("Enter the current year: "))
